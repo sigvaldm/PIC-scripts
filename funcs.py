@@ -6,15 +6,10 @@ def readHst(fname):
 
     # Make fnames a list of filenames of the form pictetra*.hst
     if os.path.isdir(fname):
-        pattern = os.path.join(fname,'pictetra??.hst')
+        pattern = os.path.join(fname,'*.hst')
         fnames = glob.glob(pattern)
-        fnames.sort()
-        pattern = os.path.join(fname,'pictetra.hst')
-        if os.path.isfile(pattern):
-            fnames.append(pattern)
     else:
         fnames = [fname]
-    print(fnames)
 
     data = []
     for fname in fnames:
@@ -24,7 +19,9 @@ def readHst(fname):
             if len(l)>0 and l[0] != '#':
                 data.append(l.split())
         f.close()
-    return np.array(data, dtype=float)
+    data = np.array(data, dtype=float)
+    data = data[data[:,0].argsort()]
+    return data
 
 def expAvg(data, dt, tau=0.05e-6):
     weight = 1-np.exp(-dt/tau)
