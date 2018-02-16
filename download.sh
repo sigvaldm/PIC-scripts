@@ -1,18 +1,16 @@
 #!/bin/bash
 
-"""
-Download .hst files from Abel listed in the code:
-
-	./download.sh
-
-Downlaod .hst, .topo and .vtk files from Abel:
-
-	./download.sh all
-
-The folders on Abel downloaded from are listed below. So is the username.
-Modify as appropriate. In order not to be asked for password a key-pair must be
-put in ~/.ssh.
-"""
+# Download .hst files from Abel listed in the code:
+# 
+# 	./download.sh
+# 
+# Downlaod .hst, .topo and .vtk files from Abel:
+# 
+# 	./download.sh all
+# 
+# The folders on Abel downloaded from are listed below. So is the username.
+# Modify as appropriate. In order not to be asked for password a key-pair must
+# be put in ~/.ssh.
 
 USER="sigvaldm"
 
