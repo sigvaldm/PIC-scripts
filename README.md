@@ -4,7 +4,7 @@ Scripts for use with PTetra.
 The following scripts are assumed to lie in a folder with subfolders prefixed
 `Run` containing data. E.g. `Run15_25mm_2.5V`. `download.sh` will create such
 folders when downloading the latest files from Abel, matching the folder
-structure on Abel. 
+structure on Abel.  More detailed description follows inside the individual scripts.
 
 | Filename                 | Brief description                                                 |
 |--------------------------|-------------------------------------------------------------------|
