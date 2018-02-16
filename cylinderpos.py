@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+Computes points on the surface of a cylinder (the probe). Under development.
+"""
+
 import numpy as np
 import sys
 
