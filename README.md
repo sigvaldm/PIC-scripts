@@ -1,10 +1,5 @@
 # PTetra scripts
-Scripts for use with PTetra.
-
-The following scripts are assumed to lie in a folder with subfolders prefixed
-`Run` containing data. E.g. `Run15_25mm_2.5V`. `download.sh` will create such
-folders when downloading the latest files from Abel, matching the folder
-structure on Abel.  More detailed description follows inside the individual scripts.
+Scripts for use with PTetra. Brief explanation follows below. More explanation is provided in each individual file.
 
 | Filename                 | Brief description                                                 |
 |--------------------------|-------------------------------------------------------------------|
@@ -16,3 +11,8 @@ structure on Abel.  More detailed description follows inside the individual scri
 | plot_IV.py               | Plots IV-characteristics                                          |
 | plot_numparticles.py     | Plots the number of particle in a simulation domain               |
 | plot_segment_currents.py | Plots the current of the segments of a probe                      |
+
+I always put the files directly in a folder where the simulation results are stored
+in subfolders prefixed with `Run`. The `.sh`-files would require modification to work
+with other folder structures. The `.py`-files should work regardless, but several
+files rely on `funcs.py` being in the same folder.
