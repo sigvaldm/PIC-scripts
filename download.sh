@@ -15,6 +15,7 @@
 USER="sigvaldm"
 
 for RUN in \
+	Run15dt_25mm_2.5V \
 	Run15_25mm_2.5V \
 	Run15_25mm_4.0V \
 	Run15_25mm_5.5V \
