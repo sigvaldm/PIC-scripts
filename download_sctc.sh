@@ -2,11 +2,11 @@
 
 # Download latest .hst files from Abel:
 # 
-# 	./download.sh
+# 	./download_sctc.sh
 # 
 # Downlaod latest .hst, .topo and .vtk files from Abel:
 # 
-# 	./download.sh all
+# 	./download_sctc.sh all
 # 
 # The folders on Abel downloaded from are listed below.
 #
@@ -29,7 +29,7 @@
 #
 #	cat <public-key> >> ~/.ssh/authorized_keys
 #
-# Note: If they private key is secured by a passphrase, you will be asked for a
+# Note: If the private key is secured by a passphrase, you will be asked for a
 # passphrase when using ssh. That happens many, many times during this script
 # and will be ennoying. The risk in turning off the passphrase is that someone
 # might steal your computer, or hack into it and steal your private key. But the
@@ -63,7 +63,7 @@ do
 		TOP=`ssh abel "ls -t $RUN/pictetra*.topo | head -n 1"`
 		VTK=`ssh abel "ls -t $RUN/pictetra*.vtk | head -n 1"`
 		SCC=`ssh abel "ls -t $RUN/scc*.vtk | head -n 1"`
-		rsync -P abel:$HST $USER@abel.uio.no:$TOP $USER@abel.uio.no:$VTK $USER@abel.uio.no:$SCC $TARGET/
+		rsync -P abel:$HST abel:$TOP abel:$VTK abel:$SCC $TARGET/
 
 	else
 		echo "Downloading latest .hst files for $TARGET"
