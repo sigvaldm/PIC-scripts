@@ -1,25 +1,45 @@
 #!/usr/bin/env python
 
 """
-Plots IV (current-voltage) characteristics.
+Plots IV (current-voltage) charactersitics based on a set of simulations.
 
 Example:
 
     ./plot_IV.py Run15_50mm_*   # Plot IV curve for 50 mm
     ./plot_IV.py Run15_*5*mm*   # Plot IV curve for 25 and 50 mm but not 100 mm
     ./plot_IV.py Run15_*        # Plot all IV curves for Run15
-    ./plot_IV.py Run15_* -p 25  # Same as above but plot current per 25 mm
-    ./plot_IV.py -p 25 Run15_*  # Same as above
 
 This will plot IV-characteristics based on *.hst files in the selected folders.
 The I and V datapoints is taken as the last timestep in the *.hst files after
-exponential moving averaging. The units on the y-axis is [uA/mm] unless the 'p'
-flag is used. Then it is uA per some integer number of mm. This is useful for
-comparison with e.g. Huy who uses uA per 25 mm. The length of the probe is
-deduced from the name of the folder, so the folders must contain the string
-'<digits>mm'. E.g. 'Run15_50mm_2.5V' will be deduced to be a 50mm probe. All
-folders specifying the same length will be taken as one datapoint on an IV curve
-for that length. Comparison is made with OML theory.
+exponential moving averaging. The units on the y-axis is in current per length.
+The length of the probe is deduced from the name of the folder, so the folders
+must contain the string '<digits>mm'. E.g. 'Run15_50mm_2.5V' will be deduced to
+be a 50mm probe. All folders specifying the same length will be taken as one
+datapoint on an IV curve for that length. Comparison is made with OML theory.
+
+In addition the following flags exist:
+
+    -c  Include currents only from specified components (Default: All
+        components). The components are numbered from 0 and in the same order as
+        in the pictetra.hst file. Expects an expression that evaluates into a
+        Python list.
+
+        Example:
+            -c "2,3,6,0"            # Components 2, 3, 6 and 0 in that order
+            -c "range(6,12)"        # Components 6-11 in ascending order
+
+    -r  Specify relaxation time in [us] for Exponential Moving Average (Default
+        0.1 us). Expects an expression that evaluates into a floating point
+        number. A value of zero turns off averaging.
+
+        Example:
+            -r 1e-2
+
+    -p  Plot currents in uA per something mm. Useful for comparison with e.g.
+        Huy which uses uA per 25 mm.
+
+        Example:
+            -p 25                   # Current is in [uA / 25 mm]
 """
 
 import numpy as np
@@ -32,28 +52,51 @@ from funcs import *
 def OML_func(V, c, beta):
     return c*V**beta
 
-paths = sys.argv[1:]
+args = sys.argv[1:]
 
-perlength = 1
-if '-p' in paths:
-    ind = paths.index('-p')
-    perlength = int(paths[ind+1])
-    paths.pop(ind+1)
-    paths.pop(ind)
+if '-c' in args:
+    ind = args.index('-c')
+    ids = np.array(eval(args[ind+1]))
+    ids = ids.reshape((-1)) # Wraps it in a list if it's a pure number
+    args.pop(ind+1)
+    args.pop(ind)
+else:
+    ids = []
 
-paths.sort()
+if '-r' in args:
+    ind = args.index('-r')
+    tau = float(eval(args[ind+1]))
+    args.pop(ind+1)
+    args.pop(ind)
+else:
+    tau = 0.1
+
+if '-p' in args:
+    ind = args.index('-p')
+    perlength = int(args[ind+1])
+    args.pop(ind+1)
+    args.pop(ind)
+else:
+    perlength = 1
+
 pattern = re.compile('([0-9]+)mm')
 datasets = dict()
 
-for path in paths:
+for path in args:
     data = readHst(path)
     length = pattern.search(path).group(1)
     data[:,1] *= 1e6    # time in us
     data[:,8::3] *= 1e6 # curents in uA
     xaxis = data[:,1]
     dx = xaxis[1]-xaxis[0]
-    current = data[:,26]+data[:,29]+data[:,32]+data[:,35]+data[:,38]+data[:,41]
-    V = expAvg(data[:,24],dx)[-1]
+    if ids == []:
+        num_ids = int((data.shape[1]-6)/3)
+        cids = np.array((range(num_ids)),dtype=int)
+    else:
+        cids = np.array(ids)
+    cids = 8+3*cids # Get index of currents
+    current = np.sum(data[:,cids],1)
+    V = expAvg(data[:,cids[0]-2],dx)[-1]
     I = -expAvg(current,dx)[-1]*perlength/int(length)
     if not length in datasets:
         datasets[length] = ([],[]) # List of x-values vs y-values
