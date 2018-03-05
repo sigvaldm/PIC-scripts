@@ -52,8 +52,13 @@ def plotAvg(x, y, label=None, tau=0.1):
     time in the same unit as the value on the x-axis.
     """
     dx = x[1]-x[0]
-    plt.plot(x, y, '#CCCCCC', linewidth=1, zorder=0)
+
+    if tau != 0.0:
+        plt.plot(x, y, '#CCCCCC', linewidth=1, zorder=0)
+
     p = plt.plot(x, expAvg(y, dx, tau), linewidth=1, label=label)
+
+    # returning this allows color to be extracted
     return p
 
 def OML_cylinder(V=2.2, l=25e-3, r=0.255e-3, n=1.66e11, T=750):
