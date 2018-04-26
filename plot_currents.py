@@ -83,6 +83,8 @@ else:
 for i in range(len(legends), len(args)):
     legends.append(args[i])
 
+print("Last datapoint in averaged current:")
+
 for path, legend in zip(args, legends):
     data = readHst(path)
     data[:,1] *= 1e6    # time in us
@@ -98,19 +100,9 @@ for path, legend in zip(args, legends):
     current = np.sum(data[:,cids],1)
     plotAvg(xaxis, current, legend, tau)
 
-# for path in args:
-#     data = readHst(path)
-#     length = int(pattern.search(path).group(1))*1e-3
-#     data[:,1] *= 1e6    # time in us
-#     data[:,8::3] *= 1e6 # curents in uA
-#     xaxis = data[:,1]
-#     dx = xaxis[1]-xaxis[0]
-#     V = expAvg(data[:,24],dx)[-1]
-#     Ioml = OML_cylinder(V,l=length)*1e6
-#     current = data[:,26]+data[:,29]+data[:,32]+data[:,35]+data[:,38]+data[:,41]
-#     p = plotAvg(xaxis, current, path)
-#     color = p[-1].get_color()
-#     # plt.plot(xaxis, Ioml*np.ones(xaxis.shape), '--', color=color, linewidth=1)
+    dx = xaxis[1]-xaxis[0]
+    last_avg_point = expAvg(current, dx, tau)[-1]
+    print("  {}: {} uA".format(legend, last_avg_point))
 
 if len(args)>1:
     plt.legend(loc='lower right')
