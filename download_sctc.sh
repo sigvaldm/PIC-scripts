@@ -39,20 +39,44 @@
 #	ssh-keygen -p -f <private-key>
 
 for RUN in \
-	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_1.0V \
-	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_2.0V \
-	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_3.0V \
-	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_4.0V \
-	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_5.0V \
-	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_6.0V \
-	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_7.0V \
-	/usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_1V \
-	/usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_2V \
-	/usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_3V \
-	/usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_4V \
-	/usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_5V \
-	/usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_6V \
-	/usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_7V
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_10n_0.08eV_1.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_10n_0.08eV_3.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_10n_0.08eV_5.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_10n_0.08eV_7.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_10n_0.17eV_1.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_10n_0.17eV_3.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_10n_0.17eV_5.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_10n_0.17eV_7.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_10n_0.26eV_1.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_10n_0.26eV_3.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_10n_0.26eV_5.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_10n_0.26eV_7.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_120n_0.08eV_1.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_120n_0.08eV_3.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_120n_0.08eV_5.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_120n_0.08eV_7.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_120n_0.17eV_1.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_120n_0.17eV_3.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_120n_0.17eV_5.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_120n_0.17eV_7.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_120n_0.26eV_1.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_120n_0.26eV_3.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_120n_0.26eV_5.0V \
+	/usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run2_50mm_120n_0.26eV_7.0V
+	# /usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_1.0V \
+	# /usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_2.0V \
+	# /usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_3.0V \
+	# /usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_4.0V \
+	# /usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_5.0V \
+	# /usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_6.0V \
+	# /usit/abel/u1/sigvaldm/PTetra/Projects/SCTC/Run1_50mm_7.0V \
+	# /usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_1V \
+	# /usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_2V \
+	# /usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_3V \
+	# /usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_4V \
+	# /usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_5V \
+	# /usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_6V \
+	# /usit/abel/u1/diakod/PicTetra/Projects/NeedleProbe/Run1_25mm_7V \
 do
 
 	HST="$RUN/pictetra.hst" 
