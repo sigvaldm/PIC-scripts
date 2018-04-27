@@ -40,6 +40,8 @@ In addition the following flags exist:
 
         Example:
             -p 25                   # Current is in [uA / 25 mm]
+
+    -o  Omit plot of OML.
 """
 
 import numpy as np
@@ -79,6 +81,13 @@ if '-p' in args:
 else:
     perlength = 1
 
+if '-o' in args:
+    ind = args.index('-o')
+    plot_OML = False
+    args.pop(ind)
+else:
+    plot_OML = True
+
 pattern = re.compile('([0-9]+)mm')
 datasets = dict()
 
@@ -105,8 +114,10 @@ for path in args:
 
 Voml = np.linspace(0,8,100)
 Ioml = -OML_cylinder(Voml, l=perlength*1e-3)*1e6
-plt.plot(Voml, Ioml, label='OML theory')
+if plot_OML:
+    plt.plot(Voml, Ioml, label='OML theory')
 
+print("Curve fits parameters:")
 for key in datasets:
     V = np.array(datasets[key][0])
     I = np.array(datasets[key][1])
@@ -119,6 +130,8 @@ for key in datasets:
     color = p[-1].get_color()
 
     plt.plot(Voml, OML_func(Voml,*popt), '--', color=color, linewidth=1)
+
+    print("  {} mm: I={:.4f}*V^{:.4f}".format(key,*popt))
 
 plt.title('IV-characteristics')
 plt.xlabel('Voltage [V]')
