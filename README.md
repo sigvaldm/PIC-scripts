@@ -1,9 +1,10 @@
-# PTetra scripts
-Scripts for use with PTetra. Brief explanation follows below. More explanation is provided in each individual file.
+# PIC scripts
+
+Scripts for administrating simulations with PTetra, densityNew and PUNC++. Unless you're using any of those programs this repository will hardly be useful. Brief explanation follows below. More explanation is provided in each individual file.
 
 | Filename                 | Brief description                                                 |
 |--------------------------|-------------------------------------------------------------------|
-| clean.sh                 | Deletes old data and restart files but leaves the latest timestep |
+| clean.sh                 | Deletes old data and restart files but leaves the latest timestep  |
 | cylinderpos.py           | Creates coordinates on a cylinder                                 |
 | download.sh              | Downloads latest data from Abel                                   |
 | funcs.py                 | Plotting functions used by other script                           |
