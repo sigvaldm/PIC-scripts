@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import meshio
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from scipy.constants import value as constants
 import sys
 import os
