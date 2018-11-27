@@ -7,14 +7,15 @@ Computes points on the surface of a cylinder (the probe). Under development.
 import numpy as np
 import sys
 
-l    = 25e-3
-r    = 0.255e-3
-zmin = 0.046 
-dz   = 1e-3
-Nz   = int(np.ceil(l/dz))
-Nth  = 8
+l    = 200e-3
+r    = 1.0e-3
+zmin = -l/2
+dz   = 2.5e-3
+offset = 1
+Nz   = int(np.ceil(l/dz))+(1-offset)
+Nth  = 1
 
-zs     = np.linspace(zmin+dz/2 , zmin+l-dz/2, Nz)
+zs     = np.linspace(zmin+offset*dz/2 , zmin+l-offset*dz/2, Nz)
 thetas = np.linspace(0,          2*np.pi,     Nth, endpoint=False)
 
 f = open(sys.argv[1],'w')
@@ -27,4 +28,4 @@ for z in zs:
         y = r*np.sin(theta)
         f.write(" %f %f %f %f\n"%(x,y,z,theta))
 
-f.write('$end\n')        
+f.write('$end\n')
