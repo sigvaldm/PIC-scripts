@@ -25,7 +25,7 @@ def readHst(fname):
     for fname in fnames:
         f = open(fname)
         for l in f:
-            l.strip() 
+            l.strip()
             if len(l)>0 and l[0] != '#':
                 data.append(l.split())
         f.close()
@@ -45,7 +45,19 @@ def expAvg(data, dt, tau=0.1):
         result[i] = weight*data[i] + (1-weight)*result[i-1]
     return result
 
-def plotAvg(x, y, label=None, tau=0.1):
+def expAvg2(data, xaxis, tau=0.1):
+    """
+    Makes an exponential moving average of "data". dt is the timestep between
+    each sample in some unit and tau is the relaxation time in the same unit.
+    """
+    result = np.zeros(data.shape)
+    result[0] = data[0]
+    for i in range(1,len(data)):
+        weight = np.exp(-(xaxis[i]-xaxis[i-1])/tau)
+        result[i] = weight*result[i-1] + (1-weight)*data[i]
+    return result
+
+def plotAvg(x, y, label=None, tau=0.1, linewidth=1):
     """
     Plots a moving exponential average of "y" versus "x" in a matplotlib plot
     while showing the raw values of "y" in the background. tau is the relaxation
@@ -56,7 +68,21 @@ def plotAvg(x, y, label=None, tau=0.1):
     if tau != 0.0:
         plt.plot(x, y, '#CCCCCC', linewidth=1, zorder=0)
 
-    p = plt.plot(x, expAvg(y, dx, tau), linewidth=1, label=label)
+    p = plt.plot(x, expAvg(y, dx, tau), linewidth=linewidth, label=label)
+
+    # returning this allows color to be extracted
+    return p
+
+def plotAvg2(x, y, label=None, tau=0.1, linewidth=1):
+    """
+    Plots a moving exponential average of "y" versus "x" in a matplotlib plot
+    while showing the raw values of "y" in the background. tau is the relaxation
+    time in the same unit as the value on the x-axis.
+    """
+    if tau != 0.0:
+        plt.plot(x, y, '#CCCCCC', linewidth=1, zorder=0)
+
+    p = plt.plot(x, expAvg2(y, x, tau), linewidth=linewidth, label=label)
 
     # returning this allows color to be extracted
     return p

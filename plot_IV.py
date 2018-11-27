@@ -51,8 +51,11 @@ import sys
 import re
 from funcs import *
 
-def OML_func(V, c, beta):
+def power_law(V, c, beta):
     return c*V**beta
+
+def oml_law(V, a, b, beta):
+    return (a**(1/beta)*V+b**(1/beta))**beta
 
 args = sys.argv[1:]
 
@@ -121,7 +124,7 @@ print("Curve fits parameters:")
 for key in datasets:
     V = np.array(datasets[key][0])
     I = np.array(datasets[key][1])
-    popt, pcov = curve_fit(OML_func, V, I)
+    popt, pcov = curve_fit(power_law, V, I)
     perr = np.sqrt(np.diag(pcov))
     beta = popt[1]
     betaerr = 3*perr[1] # 3 sigma error
@@ -129,9 +132,22 @@ for key in datasets:
     p = plt.plot(V,I,'o', label=key+'mm, $\\beta=%.2f\pm %.2f$'%(beta,betaerr))
     color = p[-1].get_color()
 
-    plt.plot(Voml, OML_func(Voml,*popt), '--', color=color, linewidth=1)
+    plt.plot(Voml, power_law(Voml,*popt), '--', color=color, linewidth=1)
 
     print("  {} mm: I={:.4f}*V^{:.4f}".format(key,*popt))
+
+# print("Curve fits parameters (oml-law):")
+# for key in datasets:
+#     V = np.array(datasets[key][0])
+#     I = np.array(datasets[key][1])
+#     popt, pcov = curve_fit(oml_law, V, I)
+#     perr = np.sqrt(np.diag(pcov))
+#     beta = popt[2]
+#     betaerr = 3*perr[2] # 3 sigma error
+
+#     plt.plot(Voml, oml_law(Voml,*popt), ':', linewidth=1)
+
+#     print("  {} mm: a={:4f}, b={:4f}, beta={:4f}".format(key,*popt))
 
 plt.title('IV-characteristics')
 plt.xlabel('Voltage [V]')

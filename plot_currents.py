@@ -91,6 +91,8 @@ for path, legend in zip(args, legends):
     data[:,8::3] *= 1e6 # curents in uA
     xaxis = data[:,1]
     dx = xaxis[1]-xaxis[0]
+    # dx_last = xaxis[-1]-xaxis[-2]
+    # print("  {}: {} s == {} s ?".format(legend, dx*1e-6, dx_last*1e-6))
     if ids == []:
         num_ids = int((data.shape[1]-6)/3)
         cids = np.array((range(num_ids)),dtype=int)
