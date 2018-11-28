@@ -7,10 +7,10 @@ Computes points on the surface of a cylinder (the probe). Under development.
 import numpy as np
 import sys
 
-l    = 200e-3
+l    = sys.argv[2] #200e-3
 r    = 1.0e-3
 zmin = -l/2
-dz   = 2.5e-3
+dz   = sys.argv[3] #2.5e-3
 offset = 1
 Nz   = int(np.ceil(l/dz))+(1-offset)
 Nth  = 1
