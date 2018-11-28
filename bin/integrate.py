@@ -75,12 +75,12 @@ for i in range(len(zs)):
 
 with open(os.path.join(path, 'profile.txt'), 'w') as file:
     file.write("#:xaxis\tz\n")
-    file.write("#:name\tx\ty\tz\ttheta\tOML\tI\n")
-    file.write("#:units\tm\tm\tm\trad\tA/m\tA/m\n")
+    file.write("#:name\tx\ty\tz\ttheta\tOML\tI\tg\n")
+    file.write("#:units\tm\tm\tm\trad\tA/m\tA/m\tdimensionless\n")
 
     for x, y, z, theta, I in zip(xs, ys, zs, thetas, Is):
-        file.write("{}\t{}\t{}\t{}\t{}\t{}\n"
-                   .format(x, y, z, theta, I_OML, I))
+        file.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\n"
+                   .format(x, y, z, theta, I_OML, I, I/I_OML))
 
 # if len(zs)==1:
 #     print("Single current: {} A/m".format(Is[0]))
