@@ -8,13 +8,20 @@ import os
 import re
 from langmuir import *
 
-path = sys.argv[1]
-
-l   = float(re.search('[\d\.]+(?=mm)', path).group())*1e-3
-n   = float(re.search('[\d\.]+(?=n)', path).group())*1e10
-eV  = float(re.search('[\d\.]+(?=eV)', path).group())
-eta = -float(re.search('[\d\.]+(?=eta)', path).group())
+# Read file and path-encoded info
+path = os.path.abspath(sys.argv[1])
+l    =  float(re.findall('[\d\.]+(?=mm)' , path)[-1])*1e-3
+n    =  float(re.findall('[\d\.]+(?=n)'  , path)[-1])*1e10
+eV   =  float(re.findall('[\d\.]+(?=eV)' , path)[-1])
+eta  = -float(re.findall('[\d\.]+(?=eta)', path)[-1])
 print('l={}, n={}, eV={}, eta={}'.format(l, n, eV, eta))
+
+# path = sys.argv[1]
+# l   = float(re.search('[\d\.]+(?=mm)', path).group())*1e-3
+# n   = float(re.search('[\d\.]+(?=n)', path).group())*1e10
+# eV  = float(re.search('[\d\.]+(?=eV)', path).group())
+# eta = -float(re.search('[\d\.]+(?=eta)', path).group())
+# print('l={}, n={}, eV={}, eta={}'.format(l, n, eV, eta))
 
 r = 1e-3
 elec = Species(n=n, eV=eV)
