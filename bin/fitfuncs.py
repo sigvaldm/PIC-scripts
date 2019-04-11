@@ -2,6 +2,7 @@ import meshio
 import numpy as np
 import re
 import os
+import scipy.special as special
 from langmuir import *
 
 def get_data(path):
@@ -54,3 +55,22 @@ def get_data(path):
     indeps = np.array([z_centroids, L, ETA], dtype=float)
 
     return indeps, facet_currents
+
+def Gamma(a, x):
+    return special.gammaincc(a, x)*special.gamma(a)
+
+def h(zeta, alpha, gamma):
+    return np.exp(-alpha*zeta)*(zeta**gamma)
+
+# Indefinite integral of h
+def H(zeta, alpha, gamma):
+    if zeta==0: zeta=np.finfo(float).eps
+    return -(zeta**gamma)*((alpha*zeta)**(-gamma))*Gamma(1+gamma,alpha*zeta)/alpha
+
+def additive_model(zeta, lambd, A, alpha, B, beta, gamma, C):
+    return C + A*h(zeta, alpha, gamma) + B*h(zeta, beta, gamma) \
+             + A*h(lambd-zeta, alpha, gamma) + B*h(lambd-zeta, beta, gamma)
+
+def int_additive_model(zeta, lambd, A, alpha, B, beta, gamma, C):
+    return C*zeta + A*H(zeta, alpha, gamma) + B*H(zeta, beta, gamma) \
+                  - A*H(lambd-zeta, alpha, gamma) - B*H(lambd-zeta, beta, gamma)

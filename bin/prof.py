@@ -14,13 +14,6 @@ eV   =  float(re.findall('[\d\.]+(?=eV)' , path)[-1])
 eta  = -float(re.findall('[\d\.]+(?=eta)', path)[-1])
 print('l={}, n={}, eV={}, eta={}'.format(l, n, eV, eta))
 
-# path = sys.argv[1]
-# l   = float(re.search('[\d\.]+(?=mm)', path).group())*1e-3
-# n   = float(re.search('[\d\.]+(?=n)', path).group())*1e10
-# eV  = float(re.search('[\d\.]+(?=eV)', path).group())
-# eta = -float(re.search('[\d\.]+(?=eta)', path).group())
-# print('l={}, n={}, eV={}, eta={}'.format(l, n, eV, eta))
-
 r = 1e-3
 elec = Species(n=n, eV=eV)
 I_OML = OML_current(Cylinder(r, 1), elec, eta=eta)

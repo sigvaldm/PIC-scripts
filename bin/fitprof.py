@@ -50,6 +50,20 @@ def gunc_reduced(z, a, b, e, f):
     c, d = 0.02859, 0.06836
     return f*func(z, a, b, c, d, e)*func(l-z, a, b, c, d, e)
 
+def additive_func(z, a, b, c, d, e):
+    return (a*np.exp(-b*z)+c*np.exp(-d*z))*z**e
+
+def additive_gunc(z, a, b, c, d, e, f):
+    return f + additive_func(z, a, b, c, d, e) + additive_func(l-z, a, b, c, d, e)
+
+def additive_gunc_reduced(z, a, b, e, f):
+    c, d = 0, 1
+    return additive_gunc(z, a, b, c, d, e, f)
+
+def additive_gunc_reduced2(z, a, e, f):
+    b = 2.105
+    return additive_gunc_reduced(z, a, b, e, f)
+
 def lfunc(z):
     # c = [0.31954035, 0.37300383, 0.01781202, 0.03428675, 0.19866518, 1.01889591] # 2
     # c = [0.25984115, 0.27587257, 0.02103033, 0.05847973, 0.20860986, 1.47716334] # 6
@@ -63,9 +77,21 @@ def lfunc(z):
 def lgunc(z, f):
     return f*lfunc(z)*lfunc(l-z)
 
-my_func = gunc
-lower = ( 0     , 0     , 0     , 0     ,  0     , 0     )
+# my_func = additive_gunc_reduced2
+# lower = ( 0     ,  0     , 1     )
+# upper = (100    , 10     ,10     )
+
+# my_func = additive_gunc_reduced
+# lower = ( 0     , 0.2   ,  0     , 1     )
+# upper = (100    , 10    , 10     ,10     )
+
+my_func = additive_gunc
+lower = ( 0     , 0.2   , 0     , 0     ,  0     , 0     )
 upper = ( 10    , 10    , 10    , 0.2   ,  10    , 10    )
+
+# my_func = gunc
+# lower = ( 0     , 0     , 0     , 0     ,  0     , 0     )
+# upper = ( 10    , 10    , 10    , 0.2   ,  10    , 10    )
 
 # my_func = gunc_reduced
 # lower = ( 0     , 0     , 0     , 0     )
