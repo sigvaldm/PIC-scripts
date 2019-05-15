@@ -8,6 +8,8 @@ import os
 import re
 from langmuir import *
 
+# Make tabulated profile current in profile.txt-file from densityNew simulations
+
 # Read file and path-encoded info
 path = os.path.abspath(sys.argv[1])
 l    =  float(re.findall('[\d\.]+(?=mm)' , path)[-1])*1e-3

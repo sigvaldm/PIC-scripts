@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# Replacing fitparamplot.py
 import numpy as np
 import sys
 import re

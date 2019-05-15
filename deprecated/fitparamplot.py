@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# Deprecated. Replaced by fitparam.py and paramplot.py
+
 import numpy as np
 import sys
 import re

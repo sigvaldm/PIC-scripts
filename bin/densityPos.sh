@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Script used to run separate instances of densityNew for each point in
+# scanpositions.txt-file
+
 NUM=$1
 
 DIR="POS$NUM"
