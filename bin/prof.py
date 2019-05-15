@@ -5,16 +5,13 @@ import sys
 import re
 import os
 from langmuir import *
+from scipy.constants import value as constants
+from fitfuncs import *
 
-# Read file and path-encoded info
-path = os.path.abspath(sys.argv[1])
-l    =  float(re.findall('[\d\.]+(?=mm)' , path)[-1])*1e-3
-n    =  float(re.findall('[\d\.]+(?=n)'  , path)[-1])*1e10
-eV   =  float(re.findall('[\d\.]+(?=eV)' , path)[-1])
-eta  = -float(re.findall('[\d\.]+(?=eta)', path)[-1])
-print('l={}, n={}, eV={}, eta={}'.format(l, n, eV, eta))
+path = sys.argv[1]
 
-r = 1e-3
+r, l, n, eV, eta = get_probe_params(path)
+
 elec = Species(n=n, eV=eV)
 I_OML = OML_current(Cylinder(r, 1), elec, eta=eta)
 print("I_OML={} A/m".format(I_OML))
@@ -44,7 +41,7 @@ facet_currents = facet_currents[ind]
 if len(sys.argv)>3:
     dz = float(sys.argv[3])
 else:
-    dz = 0.001
+    dz = r
 
 z_delimiters = np.arange(zmin, zmax + dz/2, dz)
 z_midpoints = 0.5*(z_delimiters[:-1]+z_delimiters[1:])
@@ -52,7 +49,11 @@ Is = np.zeros_like(z_midpoints)
 
 a = 0
 for i, delim in enumerate(z_delimiters[1:]):
-    b = np.where(z_centroids <= delim)[0][-1]
+    where_smaller = np.where(z_centroids <= delim)[0]
+    if len(where_smaller):
+        b = np.where(z_centroids <= delim)[0][-1]
+    else:
+        b = a # No facets within this range, sum to zero.
     Is[i] = np.average(facet_currents[a:b])
     a = b
 

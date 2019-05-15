@@ -6,6 +6,7 @@ import numpy as np
 import os
 import re
 import langmuir
+from fitfuncs import *
 
 fnin = os.path.abspath(sys.argv[1])
 
@@ -14,12 +15,7 @@ if len(sys.argv)>2:
 else:
     fnout = fnin
 
-# Read file and path-encoded info
-l    =  float(re.findall('[\d\.]+(?=mm)' , fnin)[-1])*1e-3
-n    =  float(re.findall('[\d\.]+(?=n)'  , fnin)[-1])*1e10
-eV   =  float(re.findall('[\d\.]+(?=eV)' , fnin)[-1])
-eta  = -float(re.findall('[\d\.]+(?=eta)', fnin)[-1])
-print('l={}, n={}, eV={}, eta={}'.format(l, n, eV, eta))
+r, l, n, eV, eta = get_probe_params(fnin)
 
 debye = langmuir.Species(n=n, eV=eV).debye
 

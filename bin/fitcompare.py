@@ -11,14 +11,10 @@ from fitfuncs import *
 import scipy.integrate as integrate
 
 paramfile = np.load(sys.argv[1])
-file = os.path.abspath(sys.argv[2])
-l    =  float(re.findall('[\d\.]+(?=mm)' , file)[-1])*1e-3
-n    =  float(re.findall('[\d\.]+(?=n)'  , file)[-1])*1e10
-eV   =  float(re.findall('[\d\.]+(?=eV)' , file)[-1])
-eta  = -float(re.findall('[\d\.]+(?=eta)', file)[-1])
-print('l={}, n={}, eV={}, eta={}'.format(l, n, eV, eta))
+file = sys.argv[2]
 
-r = 1e-3
+r, l, n, eV, eta = get_probe_params(file)
+
 elec = Species(n=n, eV=eV)
 I_OML = OML_current(Cylinder(r, 1), elec, eta=eta)
 debye = elec.debye
