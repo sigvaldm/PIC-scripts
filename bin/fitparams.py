@@ -44,6 +44,8 @@ for path in files:
             #               C     A alpha     B  beta gamma delta
     p_lower = np.array([    0,    0,  0.1,    0,    1,    1,    0 ])
     p_upper = np.array([   10,   10,    2,    0,    1,    1, 10.0 ])
+    p_lower = np.array([    0, 0.01,  0.1,                      0 ])
+    p_upper = np.array([   10,   10,   20,                   10.0 ])
 
     for i in range(len(p_lower)):
         if p_lower[i]==p_upper[i]:
@@ -51,7 +53,7 @@ for path in files:
 
     # Get initial guess from one step longer probe
     p_init = None
-    p_init = p_lower
+    p_init = (p_lower+p_upper)/3
     where_eta = np.where(np.abs(np.array(etas)-eta)<1e-6)[0]
     lambds_at_eta  = np.array(lambds)[where_eta]
     if len(lambds_at_eta):
@@ -79,6 +81,7 @@ for path in files:
 
     bounded = ""
     model = partial(additive_model, lambd)
+    model = lambda zeta, C, A, alpha, delta: additive_model(lambd, zeta, C, A, alpha, 0, 1, 1, delta)
     fit_of_fit = False
     if fit_of_fit:
         zeta_fit = zeta_
@@ -107,7 +110,7 @@ for path in files:
     for po, pl, pu in zip(p_opt, p_lower, p_upper):
         if np.abs(pl-pu)>1e-5 and (np.abs(po-pu)<1e-6 or np.abs(po-pl)<1e-6):
             bounded = "<--- BOUNDED"
-    print(("{:5.0f}  {:5.0f}"+7*"  {:5.2f}"+" {}").format(l*1e3, -eta, *p_opt, bounded))
+    print(("{:5.0f}  {:5.0f}"+len(p_opt)*"  {:5.2f}"+" {}").format(l*1e3, -eta, *p_opt, bounded))
 
     plt.plot(zeta, g, '+', markersize=0.1, color='gray')
     plt.plot(zeta_, g_)
