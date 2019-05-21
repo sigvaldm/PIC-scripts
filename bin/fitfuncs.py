@@ -137,18 +137,31 @@ def get_data_old(path):
 def Gamma(a, x):
     return special.gammaincc(a, x)*special.gamma(a)
 
-def h(zeta, alpha, gamma):
-    return np.exp(-alpha*zeta)*(zeta**gamma)
+# Deprecated
+# def h(zeta, alpha, gamma):
+#     return np.exp(-alpha*zeta)*(zeta**gamma)
 
 # Indefinite integral of h
+# Deprecated
 def H(zeta, alpha, gamma):
     if zeta==0: zeta=np.finfo(float).eps
     return -(zeta**gamma)*((alpha*zeta)**(-gamma))*Gamma(1+gamma,alpha*zeta)/alpha
 
-def additive_model(zeta, lambd, A, alpha, B, beta, gamma, C):
-    return C + A*h(zeta, alpha, gamma) + B*h(zeta, beta, gamma) \
-             + A*h(lambd-zeta, alpha, gamma) + B*h(lambd-zeta, beta, gamma)
+# Deprecated
+# def additive_model(zeta, lambd, A, alpha, B, beta, gamma, C):
+#     return C + A*h(zeta, alpha, gamma) + B*h(zeta, beta, gamma) \
+#              + A*h(lambd-zeta, alpha, gamma) + B*h(lambd-zeta, beta, gamma)
 
+# Deprecated
 def int_additive_model(zeta, lambd, A, alpha, B, beta, gamma, C):
     return C*zeta + A*H(zeta, alpha, gamma) + B*H(zeta, beta, gamma) \
                   - A*H(lambd-zeta, alpha, gamma) - B*H(lambd-zeta, beta, gamma)
+
+def h(zeta, alpha, gamma=1, delta=0):
+    return ((zeta+delta)**gamma)*np.exp(-alpha*zeta)
+
+def additive_model(lambd, zeta, C, A, alpha, B, beta, gamma, delta):
+    return C * (1 + A*h(zeta,       alpha, gamma, delta) \
+                  + A*h(lambd-zeta, alpha, gamma, delta) \
+                  + B*h(zeta,       beta,  gamma, delta) \
+                  + B*h(lambd-zeta, beta,  gamma, delta) )

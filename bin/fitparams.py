@@ -7,11 +7,17 @@ from scipy.optimize import curve_fit, least_squares
 from fitfuncs import *
 from functools import partial
 import matplotlib.pyplot as plt
+from localreg import *
 
 def h(zeta, alpha, gamma=1, delta=0):
-    return ((zeta+delta)**gamma)*np.exp(-alpha*zeta)
+    # return (zeta+delta)*np.exp(-alpha*zeta)
+    # return ((zeta+delta)**gamma)*np.exp(-alpha*zeta)
+    return ((zeta+delta)**gamma)*np.exp(-alpha*(zeta+delta))
 
 def additive_model(lambd, zeta, C, A, alpha, B, beta, gamma, delta):
+    delta = (1/alpha)-delta
+    assert np.all(zeta>=0)
+    assert np.all(lambd-zeta>=0)
     return C * (1 + A*h(zeta,       alpha, gamma, delta) \
                   + A*h(lambd-zeta, alpha, gamma, delta) \
                   + B*h(zeta,       beta,  gamma, delta) \
@@ -26,6 +32,7 @@ lambds = []
 etas = []
 p_opts = []
 
+
 files = sys.argv[1:]
 files.sort(key=sortkey, reverse=True)
 
@@ -34,9 +41,9 @@ for path in files:
     r, l, n, eV, eta, lambd, debye = get_probe_params(path)
     zeta, g = get_facet_currents(path)
 
-            #      C     A alpha     B  beta gamma delta
-    p_lower = [    0,    0,    0,    0,    1,    1,    0 ]
-    p_upper = [   10,   10,   10,    0,    1,    1,   10 ]
+            #               C     A alpha     B  beta gamma delta
+    p_lower = np.array([    0,    0,  0.1,    0,    1,    1,    0 ])
+    p_upper = np.array([   10,   10,    2,    0,    1,    1, 10.0 ])
 
     for i in range(len(p_lower)):
         if p_lower[i]==p_upper[i]:
@@ -44,6 +51,7 @@ for path in files:
 
     # Get initial guess from one step longer probe
     p_init = None
+    p_init = p_lower
     where_eta = np.where(np.abs(np.array(etas)-eta)<1e-6)[0]
     lambds_at_eta  = np.array(lambds)[where_eta]
     if len(lambds_at_eta):
@@ -66,15 +74,45 @@ for path in files:
     #     upper[1] = alpha+1e-6
     #     p0[1] = alpha
 
-    model = partial(additive_model, lambd)
-    p_opt, p_cov = curve_fit(model, zeta, g, p0=p_init, bounds=(p_lower, p_upper))
-    p_err = np.sqrt(np.diag(p_cov))
-    print(("{:5.0f}  {:5.0f}"+7*"  {:5.2f}").format(l*1e3, -eta, *p_opt))
+    zeta_ = np.linspace(0, lambd, 5000)
+    g_ = localreg(zeta, g, zeta_, kernel=gaussian, width=0.1, degree=2)
 
-    # DEBUG
-    # plt.plot(zeta, g, '.', markersize=0.1, color='black')
-    # plt.plot(zeta, model(zeta, *p_opt))
-    # plt.show()
+    bounded = ""
+    model = partial(additive_model, lambd)
+    fit_of_fit = False
+    if fit_of_fit:
+        zeta_fit = zeta_
+        g_fit = g_
+    else:
+        zeta_fit = zeta
+        g_fit = g
+
+    zeta_bnd = 5
+    frac_bnd = 0.5
+    inds = np.where(np.logical_or(zeta_fit<zeta_bnd, zeta_fit>lambd-zeta_bnd))[0]
+    n_bnd = len(inds)
+    n_tot = len(zeta_fit)
+    n_mid = n_tot-n_bnd
+    w_bnd = max(frac_bnd/n_bnd, 1/n_tot)
+    w_mid = (1-n_bnd*w_bnd)/n_mid if n_mid != 0 else w_bnd
+    weights = w_mid*np.ones_like(zeta_fit)
+    weights[inds] = w_bnd
+    print(w_bnd, w_mid)
+    sigma = 1/np.sqrt(weights)
+
+    p_opt, p_cov = curve_fit(model, zeta_fit, g_fit, p0=p_init,
+                             bounds=(p_lower, p_upper), sigma=sigma)
+
+    p_err = np.sqrt(np.diag(p_cov))
+    for po, pl, pu in zip(p_opt, p_lower, p_upper):
+        if np.abs(pl-pu)>1e-5 and (np.abs(po-pu)<1e-6 or np.abs(po-pl)<1e-6):
+            bounded = "<--- BOUNDED"
+    print(("{:5.0f}  {:5.0f}"+7*"  {:5.2f}"+" {}").format(l*1e3, -eta, *p_opt, bounded))
+
+    plt.plot(zeta, g, '+', markersize=0.1, color='gray')
+    plt.plot(zeta_, g_)
+    plt.plot(zeta, model(zeta, *p_opt))
+    plt.show()
 
     lambds.append(lambd)
     etas.append(eta)
