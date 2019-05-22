@@ -8,10 +8,11 @@ from fitfuncs import *
 from functools import partial
 import matplotlib.pyplot as plt
 from localreg import *
+from subprocess import call
 
 def h(zeta, alpha, gamma=1, delta=0):
     # return (zeta+delta)*np.exp(-alpha*zeta)
-    # return ((zeta+delta)**gamma)*np.exp(-alpha*zeta)
+    return ((zeta+delta)**gamma)*np.exp(-alpha*zeta)
     return ((zeta+delta)**gamma)*np.exp(-alpha*(zeta+delta))
 
 def additive_model(lambd, zeta, C, A, alpha, B, beta, gamma, delta):
@@ -32,6 +33,9 @@ lambds = []
 etas = []
 p_opts = []
 
+fit_of_fit = False
+inspect = False
+use_longer = False
 
 files = sys.argv[1:]
 files.sort(key=sortkey, reverse=True)
@@ -44,22 +48,25 @@ for path in files:
             #               C     A alpha     B  beta gamma delta
     p_lower = np.array([    0,    0,  0.1,    0,    1,    1,    0 ])
     p_upper = np.array([   10,   10,    2,    0,    1,    1, 10.0 ])
-    p_lower = np.array([    0, 0.01,  0.1,                      0 ])
-    p_upper = np.array([   10,   10,   20,                   10.0 ])
+    p_lower = np.array([    0,0.001,  0.1,                      0 ])
+    p_upper = np.array([   10,   10,   20,                   20.0 ])
 
     for i in range(len(p_lower)):
         if p_lower[i]==p_upper[i]:
             p_upper[i] += 1e-6
 
-    # Get initial guess from one step longer probe
     p_init = None
     p_init = (p_lower+p_upper)/3
-    where_eta = np.where(np.abs(np.array(etas)-eta)<1e-6)[0]
-    lambds_at_eta  = np.array(lambds)[where_eta]
-    if len(lambds_at_eta):
-        ind = np.argmin(lambds_at_eta)
-        ind = where_eta[ind]
-        p_init = deepcopy(p_opts[ind])
+    # p_init = (4*p_lower+1*p_upper)/5
+
+    # Get initial guess from one step longer probe
+    if use_longer:
+        where_eta = np.where(np.abs(np.array(etas)-eta)<1e-6)[0]
+        lambds_at_eta  = np.array(lambds)[where_eta]
+        if len(lambds_at_eta):
+            ind = np.argmin(lambds_at_eta)
+            ind = where_eta[ind]
+            p_init = deepcopy(p_opts[ind])
 
     # SLOPE ON ALPHA FOR LOW L
     # If l <= 10 mm, use slope to infer b coefficient (alpha)
@@ -76,13 +83,13 @@ for path in files:
     #     upper[1] = alpha+1e-6
     #     p0[1] = alpha
 
-    zeta_ = np.linspace(0, lambd, 5000)
-    g_ = localreg(zeta, g, zeta_, kernel=gaussian, width=0.1, degree=2)
+    if inspect or fit_of_fit:
+        zeta_ = np.linspace(0, lambd, 5000)
+        g_ = localreg(zeta, g, zeta_, kernel=gaussian, width=0.1, degree=2)
 
     bounded = ""
     model = partial(additive_model, lambd)
     model = lambda zeta, C, A, alpha, delta: additive_model(lambd, zeta, C, A, alpha, 0, 1, 1, delta)
-    fit_of_fit = False
     if fit_of_fit:
         zeta_fit = zeta_
         g_fit = g_
@@ -100,8 +107,10 @@ for path in files:
     w_mid = (1-n_bnd*w_bnd)/n_mid if n_mid != 0 else w_bnd
     weights = w_mid*np.ones_like(zeta_fit)
     weights[inds] = w_bnd
-    print(w_bnd, w_mid)
     sigma = 1/np.sqrt(weights)
+
+    if inspect:
+        print(w_bnd, w_mid)
 
     p_opt, p_cov = curve_fit(model, zeta_fit, g_fit, p0=p_init,
                              bounds=(p_lower, p_upper), sigma=sigma)
@@ -112,16 +121,18 @@ for path in files:
             bounded = "<--- BOUNDED"
     print(("{:5.0f}  {:5.0f}"+len(p_opt)*"  {:5.2f}"+" {}").format(l*1e3, -eta, *p_opt, bounded))
 
-    plt.plot(zeta, g, '+', markersize=0.1, color='gray')
-    plt.plot(zeta_, g_)
-    plt.plot(zeta, model(zeta, *p_opt))
-    plt.show()
+    if inspect:
+        plt.plot(zeta, g, '+', markersize=0.1, color='gray')
+        plt.plot(zeta_, g_)
+        plt.plot(zeta, model(zeta, *p_opt))
+        plt.show()
 
     lambds.append(lambd)
     etas.append(eta)
     p_opts.append(p_opt)
 
-Cs, As, alphas, Bs, betas, gammas, deltas = zip(*p_opts)
+# Cs, As, alphas, Bs, betas, gammas, deltas = zip(*p_opts)
+Cs, As, alphas, deltas = zip(*p_opts)
 
 np.savez_compressed('params.npz',
                     lambds=lambds,
@@ -129,8 +140,10 @@ np.savez_compressed('params.npz',
                     Cs=Cs,
                     As=As,
                     alphas=alphas,
-                    Bs=Bs,
-                    betas=betas,
-                    gammas=gammas,
+                    # Bs=Bs,
+                    # betas=betas,
+                    # gammas=gammas,
                     deltas=deltas
                    )
+
+call(["espeak", "curve fits complete"])
