@@ -41,6 +41,7 @@ inspect = len(files)==1
 use_longer = False
 use_slope = True
 use_delta = True
+add_eta_zero = True
 
 print((6*"{:>5s}  ").format("l", "eta", "C", "A", "alpha", "delta"))
 for path in files:
@@ -121,7 +122,7 @@ for path in files:
             # p_upper[3] = delta+1e-6
             # p_init[3]  = delta
 
-            inspect=True
+            # inspect=True
 
     if use_delta:
         if l<6e-3:
@@ -132,7 +133,7 @@ for path in files:
             p_upper[2] = p_opts[ind][2]*1.2
             p_init[2]  = p_opts[ind][2]
 
-            inspect=True
+            # inspect=True
 
     if np.abs(l-5e-3)<1e-4:
         p_upper[1] = 0.5
@@ -197,6 +198,27 @@ for path in files:
     lambds.append(lambd)
     etas.append(eta)
     p_opts.append(p_opt)
+
+if add_eta_zero:
+    all_lambds = np.array(lambds)
+    all_lambds.sort()
+    diffs = deepcopy(all_lambds)
+    diffs[1:] -= diffs[:-1]
+    diffs[0] = 1
+    unique_lambd_inds = np.where(np.abs(diffs)>1e-3)[0]
+    unique_lambds = all_lambds[unique_lambd_inds]
+
+    for lambd in unique_lambds:
+        where_lambd = np.where(np.abs(np.array(lambds)-lambd)<1e-6)[0]
+        etas_at_lambd = np.array(etas)[where_lambd]
+        ind = np.argmin(np.abs(etas_at_lambd))
+        ind = where_lambd[ind]
+
+        lambds.append(lambd)
+        etas.append(0)
+        alpha = p_opts[ind][2]
+        delta = p_opts[ind][3]
+        p_opts.append([1, 0, alpha, delta])
 
 # Cs, As, alphas, Bs, betas, gammas, deltas = zip(*p_opts)
 Cs, As, alphas, deltas = zip(*p_opts)
